@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int   @id   @default(autoincrement())
+  name      String
+  surname   String?
+  email     String  @unique
+  password  String
+  role      String? // admin  vip   null
+  course    String?
+  active    Boolean   @default(true)
+  accepNotifications Boolean @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt  
+  
+  offers    Offer[]
+  rates     Rate[]
+}
+
+model Offer {
+  id            Int   @id   @default(autoincrement())
+  title         String
+  price         Float
+  description   String?
+  active        Boolean   @default(true)
+  contactEmail  String?
+  location      String? 
+  published     DateTime @default(now()) // iso8601
+  expired       DateTime  // iso8601
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt   
+
+  //FK
+  idCategory    Int?
+  category      Category? @relation(fields: [idCategory], references: [id])
+
+  idUserCreator Int
+  userCreator   User  @relation(fields: [idUserCreator], references: [id])
+
+  rates   Rate[]
+}
+
+model Category{
+  id            Int   @id   @default(autoincrement())
+  name          String @unique
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt   
+
+  offers       Offer[]
+}
+
+model Rate{
+  idUser  Int
+  idOffer Int
+  value   Int  
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt   
+
+  user  User  @relation(fields: [idUser], references: [id])
+  offer  Offer  @relation(fields: [idOffer], references: [id])
+
+  @@id([idUser, idOffer])
+}
