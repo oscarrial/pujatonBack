@@ -26,9 +26,9 @@ app.use(cors({
     origin: ['http://localhost:5173', 'https://pujaton.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization' ]
 }));
-
+ 
 app.use(express.json())
 app.use(helmet())
 app.use(compression())
